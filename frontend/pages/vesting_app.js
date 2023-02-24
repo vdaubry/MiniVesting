@@ -8,7 +8,7 @@ export default function VestingApp() {
       <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-sm">
           <div>
-            <h1 className="text-2xl md:text-4xl text-gray-900 dark:text-white font-extrabold mb-5">
+            <h1 className="text-2xl md:text-4xl text-gray-900 font-extrabold mb-5">
               Your $VESTING breakdown
             </h1>
           </div>
@@ -31,12 +31,12 @@ export default function VestingApp() {
             </button>
           </div>
 
-          <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class="text-xs">
+          <div className="relative overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs">
                 <tr>
-                  <th scope="col" class="px-6 py-3"></th>
-                  <th scope="col" class="px-6 py-3"></th>
+                  <th scope="col" className="px-6 py-3"></th>
+                  <th scope="col" className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -79,29 +79,29 @@ export default function VestingApp() {
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
                     scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
                     Already vested
                   </th>
-                  <td class="px-6 py-4"></td>
+                  <td className="px-6 py-4"></td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
                     scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
                     Already released
                   </th>
-                  <td class="px-6 py-4"></td>
+                  <td className="px-6 py-4"></td>
                 </tr>
-                <tr class="bg-white dark:bg-gray-800">
+                <tr className="bg-white dark:bg-gray-800">
                   <th
                     scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
                     Releasable
                   </th>
-                  <td class="px-6 py-4"></td>
+                  <td className="px-6 py-4"></td>
                 </tr>
               </tbody>
             </table>
@@ -109,7 +109,7 @@ export default function VestingApp() {
         </div>
       </div>
 
-      <div class="container mx-auto px-4 flex flex-col items-center"></div>
+      <div className="container mx-auto px-4 flex flex-col items-center"></div>
     </>
   );
 }
