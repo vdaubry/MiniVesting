@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { Inter } from "@next/font/google";
 import LandingHeader from "@/components/LandingHeader";
 
@@ -37,25 +38,8 @@ export default function Home() {
             to help you make the most of it.
           </p>
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center mt-12">
-            <div>
-              <a href="#0">
-                <button
-                  type="button"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Read the docs
-                </button>
-              </a>
-            </div>
-            <div>
-              <a href="#0">
-                <button
-                  type="button"
-                  class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                >
-                  Join the discord
-                </button>
-              </a>
+            <div className="w-full">
+              <Image src="/vesting.webp" width={1000} height={500} />
             </div>
           </div>
         </div>
