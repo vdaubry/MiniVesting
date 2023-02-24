@@ -8,7 +8,7 @@ export default function AppHeader() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <h2 className="text-2xl">MiniVesting</h2>
           </a>
         </div>

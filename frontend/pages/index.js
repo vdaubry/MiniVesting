@@ -16,21 +16,25 @@ export default function Home() {
       </Head>
       <LandingHeader />
 
-      <div className="text-center">
+      <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6 text-center">
         <div>
-          <h1 className="text-5xl md:text-7xl text-gray-900 dark:text-white font-extrabold mb-5">
-            Make your website
+          <h1 className="text-5xl md:text-7xl text-gray-900 font-extrabold mb-5">
+            Everything You Always Wanted to Know About your vesting*
           </h1>
         </div>
         <div>
           <span className="text-5xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
-            wonderful
+            (*But Were Afraid to Ask)
           </span>
         </div>
         <div className="max-w-3xl mx-auto mt-9">
           <p className="text-xl text-gray-400">
-            Our landing page template works on all devices, so you only have to
-            set it up once, and get beautiful results forever.
+            Vesting is a powerful tool for aligning incentives between founders
+            and investors. But it's also a complex beast.
+          </p>
+          <p className="text-xl text-gray-400">
+            We've built a tool to help you understand your vesting schedule, and
+            to help you make the most of it.
           </p>
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center mt-12">
             <div>
