@@ -16,7 +16,6 @@ export default function Home() {
       </Head>
       <LandingHeader />
 
-      {/* Section header */}
       <div className="text-center">
         <div>
           <h1 className="text-5xl md:text-7xl text-gray-900 dark:text-white font-extrabold mb-5">
