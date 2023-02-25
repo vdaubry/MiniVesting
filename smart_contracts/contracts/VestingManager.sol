@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
 contract VestingManager is Ownable {
-    IERC20 private s_tokenToVest;
+    IERC20 public s_tokenToVest;
     mapping(address investor => InvestorConfig ) s_addressToInvestorConfig;
 
     /// @dev amount : number of tokens vested for a given investor
