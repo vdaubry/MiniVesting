@@ -32,10 +32,12 @@ contract VestingManager is Ownable {
     function addInvestor(address _investor, uint256 _amount, uint256 _start, uint256 _cliff, uint256 _duration) public onlyOwner {
         require(_investor != address(0), "Vesting: _investor is the zero address");
         require(_amount > 0, "Vesting: _amount is 0");
-        require(_cliff > _duration, "Vesting: _cliff is longer than _duration");
 
         s_addressToInvestorConfig[_investor] = InvestorConfig(_amount, _start, _cliff, _duration, 0);
         s_tokenToVest.transferFrom(msg.sender, address(this), _amount);
+
+        console.log("Investor added: %s", _investor);
+        console.log("Amount: %s", _amount);
     }
 
     
@@ -102,5 +104,9 @@ contract VestingManager is Ownable {
 
     function amount(address investor) public view virtual returns (uint256) {
         return s_addressToInvestorConfig[investor].amount;
+    }
+
+    function getInvestorConfig(address investor) public view virtual returns (InvestorConfig memory) {
+        return s_addressToInvestorConfig[investor];
     }
 }
