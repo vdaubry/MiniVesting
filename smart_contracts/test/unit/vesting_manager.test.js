@@ -68,6 +68,27 @@ if (!developmentChains.includes(network.name)) {
           )
         ).to.be.revertedWith("Vesting: _amount is 0");
       });
+
+      it("should transfer tokens to vesting manager", async () => {
+        const initialDeployerBalance = await vesting_token.balanceOf(deployer);
+        const investedAmount = ethers.utils.parseUnits("100", 18);
+
+        await vesting_manager.addInvestor(
+          deployer,
+          investedAmount,
+          start,
+          cliff,
+          duration
+        );
+
+        const balance = await vesting_token.balanceOf(vesting_manager.address);
+        expect(balance).to.equal(investedAmount);
+
+        const finalDeployerBalance = await vesting_token.balanceOf(deployer);
+        expect(finalDeployerBalance).to.equal(
+          initialDeployerBalance.sub(investedAmount)
+        );
+      });
     });
   });
 }

@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 
 contract VestingManager is Ownable {
     IERC20 public s_tokenToVest;
-    mapping(address investor => InvestorConfig ) s_addressToInvestorConfig;
+    mapping(address investor => InvestorConfig ) public s_addressToInvestorConfig;
 
     /// @dev amount : number of tokens vested for a given investor
     /// @dev start : start time of the vesting period
@@ -35,9 +35,6 @@ contract VestingManager is Ownable {
 
         s_addressToInvestorConfig[_investor] = InvestorConfig(_amount, _start, _cliff, _duration, 0);
         s_tokenToVest.transferFrom(msg.sender, address(this), _amount);
-
-        console.log("Investor added: %s", _investor);
-        console.log("Amount: %s", _amount);
     }
 
     
