@@ -18,22 +18,24 @@ contract Airdrop is Ownable {
     }
 
     /// @dev Claim tokens
-    /// @param _investor : address of the investor
-    function claim(address _investor) public onlyOwner {
+    function claim() public onlyOwner {
         require(
-            _investor != address(0),
-            "Airdrop: _investor is the zero address"
-        );
-        require(
-            s_addressToIsClaimed[_investor] == false,
-            "Airdrop: _investor already claimed"
+            s_addressToIsClaimed[msg.sender] == false,
+            "Airdrop already claimed"
         );
         require(
             s_tokenToAirdrop.balanceOf(address(this)) >= s_amountToAirdrop,
-            "Airdrop: not more tokens to airdrop"
+            "No more tokens to airdrop"
         );
 
-        s_addressToIsClaimed[_investor] = true;
-        s_tokenToAirdrop.transfer(_investor, s_amountToAirdrop);
+        s_addressToIsClaimed[msg.sender] = true;
+        s_tokenToAirdrop.transfer(msg.sender, s_amountToAirdrop);
+    }
+
+    function withdraw() public onlyOwner {
+        s_tokenToAirdrop.transfer(
+            msg.sender,
+            s_tokenToAirdrop.balanceOf(address(this))
+        );
     }
 }

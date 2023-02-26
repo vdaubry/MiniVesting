@@ -24,7 +24,10 @@ module.exports = async (hre) => {
 
   const vestingToken = await ethers.getContract("Vesting", deployer);
   const tokenSupply = await vestingToken.totalSupply();
-  const amountToAirdrop = tokenSupply.div(100_000); // 0.001% of total supply
+  const amountToAirdrop = ethers.utils.parseUnits(
+    (150 * 10 ** 4).toString(),
+    18
+  ); // 0.001% of total supply
   const arguments = [vestingToken.address, amountToAirdrop];
   const airdrop = await deploy("Airdrop", {
     from: deployer,

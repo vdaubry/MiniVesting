@@ -17,7 +17,6 @@ if (!developmentChains.includes(network.name)) {
       vesting_token = await ethers.getContract("Vesting", deployer);
 
       tokenSupply = await vesting_token.totalSupply();
-      vesting_token.transfer(airdrop.address, tokenSupply);
     });
 
     describe("constructor", async () => {
@@ -31,10 +30,41 @@ if (!developmentChains.includes(network.name)) {
         const amount = await airdrop.s_amountToAirdrop();
         expect(amount).to.equal(expectedAmount);
       });
+    });
 
-      it("should transfer token supply to airdrop contract", async () => {
-        const balance = await vesting_token.balanceOf(airdrop.address);
-        expect(balance).to.equal(tokenSupply);
+    describe("claim", async () => {
+      context("has enough tokens to airdrop", async () => {
+        beforeEach(async () => {
+          vesting_token.transfer(
+            airdrop.address,
+            await vesting_token.balanceOf(deployer)
+          );
+        });
+
+        it("should revert if the caller has already claimed", async () => {
+          await airdrop.claim();
+          await expect(airdrop.claim()).to.be.revertedWith(
+            "Airdrop already claimed"
+          );
+        });
+
+        it("should transfer tokens to caller if the caller has not claimed", async () => {
+          await airdrop.claim();
+          const balance = await vesting_token.balanceOf(deployer);
+          expect(balance).to.equal(await airdrop.s_amountToAirdrop());
+        });
+      });
+
+      context("no more tokens to airdrop", async () => {
+        beforeEach(async () => {
+          await airdrop.withdraw();
+        });
+
+        it("should revert", async () => {
+          await expect(airdrop.claim()).to.be.revertedWith(
+            "No more tokens to airdrop"
+          );
+        });
       });
     });
   });
