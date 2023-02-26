@@ -10,12 +10,14 @@ module.exports = async (hre) => {
 };
 
 const updateAddresses = async () => {
-  const contract = await ethers.getContract("Vesting");
+  const contract = await ethers.getContract("VestingManager");
+  const vesting_token = await ethers.getContract("Vesting");
   const adresses = JSON.parse(fs.readFileSync(frontendAddressesFile, "utf8"));
   const chainId = network.config.chainId;
 
   adresses[chainId] = {
     contract: contract.address,
+    vesting_token: vesting_token.address,
   };
 
   fs.writeFileSync(frontendAddressesFile, JSON.stringify(adresses));
