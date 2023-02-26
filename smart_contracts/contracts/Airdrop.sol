@@ -18,7 +18,7 @@ contract Airdrop is Ownable {
     }
 
     /// @dev Claim tokens
-    function claim() public onlyOwner {
+    function claim() public {
         require(
             s_addressToIsClaimed[msg.sender] == false,
             "Airdrop already claimed"
