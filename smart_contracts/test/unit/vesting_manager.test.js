@@ -179,20 +179,39 @@ if (!developmentChains.includes(network.name)) {
         context("when tokens are due", async () => {
           beforeEach(async () => {
             await time.increaseTo(new Date("2022-08-13").getTime());
-            initialBalance = await vesting_token.balanceOf(deployer);
-            await vesting_manager.release(deployer);
-            investorConfig = await vesting_manager.getInvestorConfig(deployer);
           });
 
-          it("updates investor total released tokens ", async () => {
-            expect(investorConfig.released).to.equal("62000000023148148148");
+          describe("events", async () => {
+            it("emits a TokensReleased event", async () => {
+              await expect(vesting_manager.release(deployer))
+                .to.emit(vesting_manager, "ERC20Released")
+                .withArgs(
+                  vesting_token.address,
+                  "62000000023148148148",
+                  deployer
+                );
+            });
           });
 
-          it("transfers tokens to investor", async () => {
-            const currentBalance = await vesting_token.balanceOf(deployer);
-            expect(currentBalance).to.equal(
-              initialBalance.add(investorConfig.released)
-            );
+          describe("state", async () => {
+            beforeEach(async () => {
+              initialBalance = await vesting_token.balanceOf(deployer);
+              await vesting_manager.release(deployer);
+              investorConfig = await vesting_manager.getInvestorConfig(
+                deployer
+              );
+            });
+
+            it("updates investor total released tokens ", async () => {
+              expect(investorConfig.released).to.equal("62000000023148148148");
+            });
+
+            it("transfers tokens to investor", async () => {
+              const currentBalance = await vesting_token.balanceOf(deployer);
+              expect(currentBalance).to.equal(
+                initialBalance.add(investorConfig.released)
+              );
+            });
           });
         });
       });
