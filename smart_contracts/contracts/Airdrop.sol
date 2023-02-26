@@ -32,6 +32,13 @@ contract Airdrop is Ownable {
         s_tokenToAirdrop.transfer(msg.sender, s_amountToAirdrop);
     }
 
+    /// @dev Check if address has claimed tokens
+    /// @param _address : address to check
+    function isClaimed(address _address) public view returns (bool) {
+        return s_addressToIsClaimed[_address];
+    }
+
+    /// @dev Withdraw tokens
     function withdraw() public onlyOwner {
         s_tokenToAirdrop.transfer(
             msg.sender,

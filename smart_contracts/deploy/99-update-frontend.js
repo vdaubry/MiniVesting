@@ -3,6 +3,7 @@ const { network, ethers } = require("hardhat");
 
 const frontendAddressesFile = "../frontend/constants/contract_addresses.json";
 const frontendContractAbiFile = "../frontend/constants/contract_abi.json";
+const frontendAirdropAbiFile = "../frontend/constants/airdrop_abi.json";
 
 module.exports = async (hre) => {
   await updateAddresses();
@@ -30,6 +31,12 @@ const updateAbi = async () => {
   fs.writeFileSync(
     frontendContractAbiFile,
     contract.interface.format(ethers.utils.FormatTypes.json)
+  );
+
+  const airdrop = await ethers.getContract("Airdrop");
+  fs.writeFileSync(
+    frontendAirdropAbiFile,
+    airdrop.interface.format(ethers.utils.FormatTypes.json)
   );
 };
 

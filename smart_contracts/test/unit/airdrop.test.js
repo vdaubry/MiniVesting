@@ -6,7 +6,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
 if (!developmentChains.includes(network.name)) {
   describe.skip;
 } else {
-  describe.only("Airdrop", () => {
+  describe("Airdrop", () => {
     let deployer, airdrop, tokenSupply;
 
     beforeEach(async () => {
@@ -65,6 +65,26 @@ if (!developmentChains.includes(network.name)) {
             "No more tokens to airdrop"
           );
         });
+      });
+    });
+
+    describe("isClaimed", async () => {
+      beforeEach(async () => {
+        vesting_token.transfer(
+          airdrop.address,
+          await vesting_token.balanceOf(deployer)
+        );
+      });
+
+      it("should return false if the caller has not claimed", async () => {
+        const claimed = await airdrop.isClaimed(deployer);
+        expect(claimed).to.be.false;
+      });
+
+      it("should return true if the caller has claimed", async () => {
+        await airdrop.claim();
+        const claimed = await airdrop.isClaimed(deployer);
+        expect(claimed).to.be.true;
       });
     });
   });
