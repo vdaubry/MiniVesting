@@ -30,8 +30,8 @@ if (!developmentChains.includes(network.name)) {
 
     describe("addInvestor", async () => {
       const start = new Date("2022-06-13").getTime();
-      const cliff = 60 * 60 * 24 * 30; // 30 days
-      const duration = 60 * 60 * 24 * 365; // 365 days
+      const cliff = 60 * 60 * 24 * 30 * 1000; // 30 days
+      const duration = 60 * 60 * 24 * 365 * 1000; // 365 days
 
       it("should add investor config", async () => {
         const investedAmount = ethers.utils.parseUnits("100", 18);
@@ -88,6 +88,63 @@ if (!developmentChains.includes(network.name)) {
         expect(finalDeployerBalance).to.equal(
           initialDeployerBalance.sub(investedAmount)
         );
+      });
+    });
+
+    describe.only("vestedAmount", async () => {
+      const investedAmount = ethers.utils.parseUnits("365", 18);
+      const start = new Date("2022-06-13").getTime();
+      const cliff = 60 * 60 * 24 * 30 * 1000; // 30 days
+      const duration = 60 * 60 * 24 * 365 * 1000; // 365 days
+
+      beforeEach(async () => {
+        await vesting_manager.addInvestor(
+          deployer,
+          investedAmount,
+          start,
+          cliff,
+          duration
+        );
+      });
+
+      it("should return 0 when current time is before start", async () => {
+        const now = new Date("2022-01-01").getTime();
+
+        const vestedAmount = await vesting_manager.vestedAmount(now, deployer);
+
+        expect(vestedAmount).to.equal(0);
+      });
+
+      it("should return 0 when current time is before cliff", async () => {
+        const now = new Date("2022-07-12").getTime();
+
+        const vestedAmount = await vesting_manager.vestedAmount(now, deployer);
+
+        expect(vestedAmount).to.equal(0);
+      });
+
+      it("should return token 1 day after cliff", async () => {
+        const now = new Date("2022-07-14").getTime();
+
+        const vestedAmount = await vesting_manager.vestedAmount(now, deployer);
+
+        expect(vestedAmount).to.equal(ethers.utils.parseUnits("1", 18));
+      });
+
+      it("should return token 30 days after cliff", async () => {
+        const now = new Date("2022-08-13").getTime();
+
+        const vestedAmount = await vesting_manager.vestedAmount(now, deployer);
+
+        expect(vestedAmount).to.equal(ethers.utils.parseUnits("31", 18));
+      });
+
+      it("should return all token when user is fully vested", async () => {
+        const now = start + cliff + duration;
+
+        const vestedAmount = await vesting_manager.vestedAmount(now, deployer);
+
+        expect(vestedAmount).to.equal(investedAmount);
       });
     });
   });

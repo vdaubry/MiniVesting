@@ -38,29 +38,34 @@ contract VestingManager is Ownable {
     }
 
     
-     /// @dev Getter for the amount of releasable eth.
+     /// @dev Getter for the amount of releasable token.
     function releasable(address investor) public view virtual returns (uint256) {
         return vestedAmount(uint64(block.timestamp), investor) - released(investor);
     }
 
     /**
-     * @dev Calculates the amount of ether that has already vested. Default implementation is a linear vesting curve.
+     * @dev Calculates the amount of token that has already vested. Default implementation is a linear vesting curve.
+     * @param timestamp The timestamp at which the vested amount is calculated
+     * @param investor The address of the investor
      */
     function vestedAmount(uint64 timestamp, address investor) public view virtual returns (uint256) {
-        return _vestingSchedule(address(this).balance + released(investor), timestamp, investor);
+        return _vestingSchedule(timestamp, investor);
     }
 
     /**
      * @dev Amount of token already released
+     * @param investor The address of the investor
+     */
      */
     function released(address investor) public view virtual returns (uint256) {
         return s_addressToInvestorConfig[investor].released;
     }
 
     /**
-     * @dev Release the native token (ether) that have already vested.
+     * @dev Release the native token (token) that have already vested.
+     * @param investor The address of the investor
      *
-     * Emits a {EtherReleased} event.
+     * Emits a {tokenReleased} event.
      */
     function release(address investor) public virtual {
         uint256 unreleased = releasable(investor);
@@ -76,13 +81,17 @@ contract VestingManager is Ownable {
      * @dev Virtual implementation of the vesting formula. This returns the amount vested, as a function of time, for
      * an asset given its total historical allocation.
      */
-    function _vestingSchedule(uint256 totalAllocation, uint64 timestamp, address investor) internal view virtual returns (uint256) {
+    function _vestingSchedule(uint64 timestamp, address investor) internal view virtual returns (uint256) {
+        uint256 totalAllocation = amount(investor);
         uint256 releaseStartTime = start(investor) + cliff(investor);
         if (timestamp < releaseStartTime) {
+            console.log("timestamp < releaseStartTime");
             return 0;
-        } else if (timestamp > releaseStartTime + duration(investor)) {
+        } else if (timestamp > (releaseStartTime + duration(investor))) {
+            console.log("timestamp > (releaseStartTime + duration(investor))");
             return totalAllocation;
         } else {
+            console.log("else");
             return (totalAllocation * (timestamp - releaseStartTime)) / duration(investor);
         }
     }
