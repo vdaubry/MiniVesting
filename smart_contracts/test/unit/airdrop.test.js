@@ -7,7 +7,7 @@ if (!developmentChains.includes(network.name)) {
   describe.skip;
 } else {
   describe("Airdrop", () => {
-    let deployer, airdrop, tokenSupply;
+    let deployer, airdrop, tokenSupply, vesting_token, vesting_manager;
 
     beforeEach(async () => {
       await deployments.fixture(["all"]);
@@ -15,6 +15,7 @@ if (!developmentChains.includes(network.name)) {
 
       airdrop = await ethers.getContract("Airdrop", deployer);
       vesting_token = await ethers.getContract("Vesting", deployer);
+      vesting_manager = await ethers.getContract("VestingManager", deployer);
 
       tokenSupply = await vesting_token.totalSupply();
     });
@@ -48,10 +49,25 @@ if (!developmentChains.includes(network.name)) {
           );
         });
 
-        it("should transfer tokens to caller if the caller has not claimed", async () => {
+        // it("should transfer tokens to caller if the caller has not claimed", async () => {
+        //   await airdrop.claim();
+        //   const balance = await vesting_token.balanceOf(deployer);
+        //   expect(balance).to.equal(await airdrop.s_amountToAirdrop());
+        // });
+
+        it.only("should call addInvestor on VestingManager", async () => {
+          const amount = await airdrop.s_amountToAirdrop();
+
           await airdrop.claim();
-          const balance = await vesting_token.balanceOf(deployer);
-          expect(balance).to.equal(await airdrop.s_amountToAirdrop());
+
+          const investorConfig = await vesting_manager.getInvestorConfig(
+            deployer
+          );
+
+          expect(investorConfig.amount).to.equal(amount);
+          expect(investorConfig.cliff).to.equal(60 * 60 * 24 * 2);
+          expect(investorConfig.duration).to.equal(60 * 60 * 24 * 365);
+          expect(investorConfig.released).to.equal(0);
         });
       });
 

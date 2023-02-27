@@ -1,20 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "./VestingManager.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
 contract Airdrop is Ownable {
     mapping(address => bool) public s_addressToIsClaimed;
-    IERC20 public s_tokenToAirdrop;
-    uint256 public s_amountToAirdrop;
+    IERC20 public immutable s_tokenToAirdrop;
+    uint256 public immutable s_amountToAirdrop;
+    VestingManager public immutable s_vestingManager;
+
+    uint public constant CLIFF = 60 * 60 * 24 * 2; // 2 days
+    uint public constant DURATION = 60 * 60 * 24 * 365; // 1 year
 
     /// @param _tokenToAirdrop : address of the token to airdrop
     /// @param _amountToAirdrop : amount of tokens to airdrop
-    constructor(address _tokenToAirdrop, uint256 _amountToAirdrop) {
+    /// @param _vestingManager : address of the vesting manager
+    constructor(
+        address _tokenToAirdrop,
+        uint256 _amountToAirdrop,
+        address _vestingManager
+    ) {
         s_tokenToAirdrop = IERC20(_tokenToAirdrop);
         s_amountToAirdrop = _amountToAirdrop;
+        s_vestingManager = VestingManager(_vestingManager);
+    }
+
+    function initialize() public onlyOwner {
+        s_tokenToAirdrop.approve(address(s_vestingManager), type(uint256).max);
     }
 
     /// @dev Claim tokens
@@ -29,7 +44,13 @@ contract Airdrop is Ownable {
         );
 
         s_addressToIsClaimed[msg.sender] = true;
-        s_tokenToAirdrop.transfer(msg.sender, s_amountToAirdrop);
+        s_vestingManager.addInvestor(
+            msg.sender,
+            s_amountToAirdrop,
+            block.timestamp,
+            CLIFF,
+            DURATION
+        );
     }
 
     /// @dev Check if address has claimed tokens

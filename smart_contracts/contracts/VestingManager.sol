@@ -35,7 +35,7 @@ contract VestingManager is Ownable {
     /// @param _start : start time of the vesting period
     /// @param _cliff : cliff as seconds after start time
     /// @param _duration : duration as seconds after start time
-    function addInvestor(address _investor, uint256 _amount, uint256 _start, uint256 _cliff, uint256 _duration) public onlyOwner {
+    function addInvestor(address _investor, uint256 _amount, uint256 _start, uint256 _cliff, uint256 _duration) public {
         require(_investor != address(0), "Vesting: _investor is the zero address");
         require(_amount > 0, "Vesting: _amount is 0");
         require(s_addressToInvestorConfig[_investor].amount == 0, "Vesting: _investor already exists");

@@ -23,18 +23,26 @@ module.exports = async (hre) => {
   log(`Deploy Airdrop with owner : ${deployer}`);
 
   const vestingToken = await ethers.getContract("Vesting", deployer);
+  const vesting_manager = await ethers.getContract("VestingManager", deployer);
   const tokenSupply = await vestingToken.totalSupply();
   const amountToAirdrop = ethers.utils.parseUnits(
     (150 * 10 ** 4).toString(),
     18
   ); // 0.001% of total supply
-  const arguments = [vestingToken.address, amountToAirdrop];
+  const arguments = [
+    vestingToken.address,
+    amountToAirdrop,
+    vesting_manager.address,
+  ];
   const airdrop = await deploy("Airdrop", {
     from: deployer,
     args: arguments,
     log: true,
     waitConfirmations: waitBlockConfirmations,
   });
+
+  const dca = await ethers.getContract("Airdrop", deployer);
+  await dca.initialize({ gasLimit: 3e7 });
 
   vestingToken.transfer(airdrop.address, tokenSupply);
 
