@@ -38,6 +38,7 @@ contract VestingManager is Ownable {
     function addInvestor(address _investor, uint256 _amount, uint256 _start, uint256 _cliff, uint256 _duration) public onlyOwner {
         require(_investor != address(0), "Vesting: _investor is the zero address");
         require(_amount > 0, "Vesting: _amount is 0");
+        require(s_addressToInvestorConfig[_investor].amount == 0, "Vesting: _investor already exists");
 
         s_addressToInvestorConfig[_investor] = InvestorConfig(_amount, _start, _cliff, _duration, 0);
         s_tokenToVest.transferFrom(msg.sender, address(this), _amount);

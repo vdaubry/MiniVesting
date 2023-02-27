@@ -70,6 +70,28 @@ if (!developmentChains.includes(network.name)) {
         ).to.be.revertedWith("Vesting: _amount is 0");
       });
 
+      it("should revert when investor config already exists", async () => {
+        const investedAmount = ethers.utils.parseUnits("100", 18);
+
+        await vesting_manager.addInvestor(
+          deployer,
+          investedAmount,
+          start,
+          cliff,
+          duration
+        );
+
+        await expect(
+          vesting_manager.addInvestor(
+            deployer,
+            investedAmount,
+            start,
+            cliff,
+            duration
+          )
+        ).to.be.revertedWith("Vesting: _investor already exists");
+      });
+
       it("should transfer tokens to vesting manager", async () => {
         const initialDeployerBalance = await vesting_token.balanceOf(deployer);
         const investedAmount = ethers.utils.parseUnits("100", 18);
