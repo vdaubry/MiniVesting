@@ -21,9 +21,7 @@ export default function VestingDetails() {
     args: [account],
   });
 
-  const balance = balanceFromCall
-    ? ethers.utils.formatUnits(balanceFromCall.toString(), 18)
-    : 0;
+  const balance = ethers.utils.formatUnits(balanceFromCall.toString(), 18);
 
   return (
     <>
