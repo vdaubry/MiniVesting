@@ -61,15 +61,6 @@ contract VestingManager is Ownable {
     }
 
     /**
-     * @dev Amount of token already released
-     * @param investor The address of the investor
-     *
-     */
-    function released(address investor) public view virtual returns (uint256) {
-        return s_addressToInvestorConfig[investor].released;
-    }
-
-    /**
      * @dev Release the native token (token) that have already vested.
      * @param investor The address of the investor
      *
@@ -125,6 +116,12 @@ contract VestingManager is Ownable {
     /// @param investor The address of the investor
     function amount(address investor) public view virtual returns (uint256) {
         return s_addressToInvestorConfig[investor].amount;
+    }
+
+    /// @dev Amount of token already released
+    /// @param investor The address of the investor
+    function released(address investor) public view virtual returns (uint256) {
+        return s_addressToInvestorConfig[investor].released;
     }
 
     /// @dev Getter for the investor config

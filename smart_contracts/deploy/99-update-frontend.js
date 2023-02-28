@@ -27,7 +27,7 @@ const updateAddresses = async () => {
 };
 
 const updateAbi = async () => {
-  const contract = await ethers.getContract("Vesting");
+  const contract = await ethers.getContract("VestingManager");
   fs.writeFileSync(
     frontendContractAbiFile,
     contract.interface.format(ethers.utils.FormatTypes.json)

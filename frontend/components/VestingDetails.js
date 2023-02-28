@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { erc20Abi, contractAddresses } from "../constants";
+import { erc20Abi, contractAddresses, contractAbi } from "../constants";
 import { useNetwork, useAccount, useContractRead } from "wagmi";
 
 export default function VestingDetails() {
@@ -14,6 +14,8 @@ export default function VestingDetails() {
     vestingTokenAddress = contractAddresses[chainId]["vesting_token"];
   }
 
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+
   const { data: balanceFromCall } = useContractRead({
     address: vestingTokenAddress,
     abi: erc20Abi,
@@ -21,7 +23,69 @@ export default function VestingDetails() {
     args: [account],
   });
 
-  const balance = ethers.utils.formatUnits(balanceFromCall.toString(), 18);
+  const { data: startDateFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "start",
+    args: [account],
+  });
+
+  const { data: cliffDateFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "cliff",
+    args: [account],
+  });
+
+  const { data: durationDateFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "duration",
+    args: [account],
+  });
+
+  const { data: vestingAmountFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "amount",
+    args: [account],
+  });
+
+  const { data: amountVestedFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "vestedAmount",
+    args: [currentTimestamp, account],
+  });
+
+  const { data: releasedAmountFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "released",
+    args: [account],
+  });
+
+  const { data: releasableAmountFromCall } = useContractRead({
+    address: contractAddress,
+    abi: contractAbi,
+    functionName: "releasable",
+    args: [account],
+  });
+
+  const balance =
+    balanceFromCall && ethers.utils.formatUnits(balanceFromCall.toString(), 18);
+  const startDate =
+    startDateFromCall && new Date(startDateFromCall * 1000).toDateString();
+  const cliffDate =
+    cliffDateFromCall &&
+    new Date(
+      (startDateFromCall.toNumber() + cliffDateFromCall.toNumber()) * 1000
+    ).toDateString();
+  const durationDate =
+    durationDateFromCall &&
+    new Date(
+      (startDateFromCall.toNumber() + durationDateFromCall.toNumber()) * 1000
+    ).toDateString();
 
   return (
     <>
@@ -32,14 +96,14 @@ export default function VestingDetails() {
               Your $VESTING breakdown
             </h1>
           </div>
-          <div className="bg-gradient-to-br from-purple-600 to-blue-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <div className="bg-gradient-to-br from-purple-600 to-blue-500 block max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <h5 className="mb-2 text-base font-bold tracking-tight text-white dark:text-white">
               Balance
             </h5>
             <p className="font-bold text-5xl text-white">{balance}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600 to-blue-500 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-4">
+          <div className="bg-gradient-to-br from-purple-600 to-blue-500 block max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-4">
             <p className="font-semibold text-white">
               Your {balance} vested tokens have been unlocked !
             </p>
@@ -67,7 +131,7 @@ export default function VestingDetails() {
                   >
                     Start date
                   </th>
-                  <td className="px-6 py-4">02/01/2020</td>
+                  <td className="px-6 py-4">{startDate}</td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -76,7 +140,7 @@ export default function VestingDetails() {
                   >
                     Cliff
                   </th>
-                  <td className="px-6 py-4">02/01/2020</td>
+                  <td className="px-6 py-4">{cliffDate}</td>
                 </tr>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -85,7 +149,7 @@ export default function VestingDetails() {
                   >
                     End date
                   </th>
-                  <td className="px-6 py-4">02/01/2020</td>
+                  <td className="px-6 py-4">{durationDate}</td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -94,7 +158,13 @@ export default function VestingDetails() {
                   >
                     Total vesting
                   </th>
-                  <td className="px-6 py-4">kjb</td>
+                  <td className="px-6 py-4">
+                    {vestingAmountFromCall &&
+                      ethers.utils.formatUnits(
+                        vestingAmountFromCall.toString(),
+                        18
+                      )}
+                  </td>
                 </tr>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -103,7 +173,13 @@ export default function VestingDetails() {
                   >
                     Already vested
                   </th>
-                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4">
+                    {amountVestedFromCall &&
+                      ethers.utils.formatUnits(
+                        amountVestedFromCall.toString(),
+                        18
+                      )}
+                  </td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -112,7 +188,13 @@ export default function VestingDetails() {
                   >
                     Already released
                   </th>
-                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4">
+                    {releasedAmountFromCall &&
+                      ethers.utils.formatUnits(
+                        releasedAmountFromCall.toString(),
+                        18
+                      )}
+                  </td>
                 </tr>
                 <tr className="bg-white dark:bg-gray-800">
                   <th
@@ -121,7 +203,13 @@ export default function VestingDetails() {
                   >
                     Releasable
                   </th>
-                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4">
+                    {releasableAmountFromCall &&
+                      ethers.utils.formatUnits(
+                        releasableAmountFromCall.toString(),
+                        18
+                      )}
+                  </td>
                 </tr>
               </tbody>
             </table>

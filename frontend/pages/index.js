@@ -39,7 +39,12 @@ export default function Home() {
           </p>
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center mt-12">
             <div className="w-full">
-              <Image src="/vesting.webp" width={1000} height={500} />
+              <Image
+                src="/vesting.webp"
+                width={1000}
+                height={500}
+                alt="vesting"
+              />
             </div>
           </div>
         </div>
