@@ -6,13 +6,14 @@ if (!developmentChains.includes(network.name)) {
   describe.skip;
 } else {
   describe("vesting", () => {
-    let deployer;
+    let deployer, airdrop;
 
     beforeEach(async () => {
       await deployments.fixture(["all"]);
       deployer = (await getNamedAccounts()).deployer;
 
       vesting = await ethers.getContract("Vesting", deployer);
+      airdrop = await ethers.getContract("Airdrop", deployer);
     });
 
     describe("constructor", async () => {
@@ -36,8 +37,8 @@ if (!developmentChains.includes(network.name)) {
         expect(symbol).to.equal("VESTING");
       });
 
-      it("should mint all tokens to deployer", async () => {
-        const balance = await vesting.balanceOf(deployer);
+      it("should mint all tokens to airdrop contract", async () => {
+        const balance = await vesting.balanceOf(airdrop.address);
         expect(balance).to.equal(expectedTotalSupply);
       });
     });

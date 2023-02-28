@@ -49,13 +49,7 @@ if (!developmentChains.includes(network.name)) {
           );
         });
 
-        // it("should transfer tokens to caller if the caller has not claimed", async () => {
-        //   await airdrop.claim();
-        //   const balance = await vesting_token.balanceOf(deployer);
-        //   expect(balance).to.equal(await airdrop.s_amountToAirdrop());
-        // });
-
-        it.only("should call addInvestor on VestingManager", async () => {
+        it("should call addInvestor on VestingManager", async () => {
           const amount = await airdrop.s_amountToAirdrop();
 
           await airdrop.claim();

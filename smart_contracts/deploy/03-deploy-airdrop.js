@@ -41,8 +41,8 @@ module.exports = async (hre) => {
     waitConfirmations: waitBlockConfirmations,
   });
 
-  const dca = await ethers.getContract("Airdrop", deployer);
-  await dca.initialize({ gasLimit: 3e7 });
+  const aidrop = await ethers.getContract("Airdrop", deployer);
+  await aidrop.initialize({ gasLimit: 3e7 });
 
   vestingToken.transfer(airdrop.address, tokenSupply);
 

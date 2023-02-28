@@ -7,7 +7,7 @@ if (!developmentChains.includes(network.name)) {
   describe.skip;
 } else {
   describe("VestingManager", () => {
-    let deployer, vesting, vesting_manager, investorConfig, initialBalance;
+    let deployer, airdrop, vesting_manager, investorConfig, initialBalance;
 
     beforeEach(async () => {
       await deployments.fixture(["all"]);
@@ -15,11 +15,14 @@ if (!developmentChains.includes(network.name)) {
 
       vesting_token = await ethers.getContract("Vesting", deployer);
       vesting_manager = await ethers.getContract("VestingManager", deployer);
+      airdrop = await ethers.getContract("Airdrop", deployer);
 
       await vesting_token.approve(
         vesting_manager.address,
         ethers.constants.MaxInt256
       );
+
+      airdrop.withdraw();
     });
 
     describe("constructor", async () => {
