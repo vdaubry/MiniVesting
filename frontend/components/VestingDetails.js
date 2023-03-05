@@ -4,6 +4,7 @@ import { erc20Abi, contractAddresses, contractAbi } from "../constants";
 import { useNetwork, useAccount, useContractRead } from "wagmi";
 import { truncatedAmount } from "../utils/format";
 import ClaimVested from "./ClaimVested";
+import moment from "moment";
 
 export default function VestingDetails() {
   const { chain } = useNetwork();
@@ -75,21 +76,20 @@ export default function VestingDetails() {
   });
 
   const balance = truncatedAmount(balanceFromCall);
-  const startDate =
-    startDateFromCall && new Date(startDateFromCall * 1000).toDateString();
+  const startDate = formatDate(startDateFromCall);
   const cliffDate =
     cliffDateFromCall &&
-    new Date(
-      (startDateFromCall.toNumber() + cliffDateFromCall.toNumber()) * 1000
-    ).toDateString();
+    formatDate(startDateFromCall.toNumber() + cliffDateFromCall.toNumber());
   const durationDate =
     durationDateFromCall &&
-    new Date(
-      (startDateFromCall.toNumber() + durationDateFromCall.toNumber()) * 1000
-    ).toDateString();
+    formatDate(startDateFromCall.toNumber() + durationDateFromCall.toNumber());
 
   const releasableAmount = truncatedAmount(releasableAmountFromCall);
   const vestedAmount = truncatedAmount(amountVestedFromCall);
+
+  function formatDate(date) {
+    return moment(date * 1000).format("MM/DD/YYYY HH:mm");
+  }
 
   return (
     <>

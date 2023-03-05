@@ -20,7 +20,7 @@ import {
 
 export default function VestingApp() {
   const { chain } = useNetwork();
-  const { address: account, isConnected } = useAccount();
+  const { address: account } = useAccount();
   const dispatch = useNotification();
 
   const [shouldReloadUI, setShouldReloadUI] = useState(false);
