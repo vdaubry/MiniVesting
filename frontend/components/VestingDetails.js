@@ -4,6 +4,7 @@ import { erc20Abi, contractAddresses, contractAbi } from "../constants";
 import { useNetwork, useAccount, useContractRead } from "wagmi";
 import { truncatedAmount } from "../utils/format";
 import ClaimVested from "./ClaimVested";
+import VestingChart from "./VestingChart";
 import moment from "moment";
 
 export default function VestingDetails() {
@@ -108,6 +109,8 @@ export default function VestingDetails() {
           </div>
 
           <ClaimVested />
+
+          <VestingChart start={new Date()} />
 
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
