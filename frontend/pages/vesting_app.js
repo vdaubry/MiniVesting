@@ -1,5 +1,6 @@
 import AppHeader from "@/components/AppHeader";
 import VestingDetails from "@/components/VestingDetails";
+import { useNotification } from "web3uikit";
 
 import {
   useNetwork,
@@ -9,8 +10,12 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { useNotification, Bell } from "web3uikit";
 import { airdropAbi, contractAddresses } from "../constants";
+
+import {
+  handleFailureNotification,
+  handleSuccessNotification,
+} from "../utils/notifications";
 
 export default function VestingApp() {
   const { chain } = useNetwork();
@@ -51,38 +56,12 @@ export default function VestingApp() {
     hash: data?.hash,
     confirmations: 1,
     onError(error) {
-      handleFailureNotification(error.message);
+      handleFailureNotification(dispatch, error.message);
     },
     onSuccess(data) {
-      handleSuccessNotification();
+      handleSuccessNotification(dispatch);
     },
   });
-
-  /**************************************
-   *
-   * UI Helpers
-   *
-   **************************************/
-
-  const handleSuccessNotification = () => {
-    dispatch({
-      type: "info",
-      message: "Transaction completed !",
-      title: "Tx notification",
-      position: "topR",
-      icon: <Bell fontSize={20} />,
-    });
-  };
-
-  const handleFailureNotification = (msg) => {
-    dispatch({
-      type: "error",
-      message: msg,
-      title: "Error",
-      position: "topR",
-      icon: <Bell fontSize={20} />,
-    });
-  };
 
   return (
     <>

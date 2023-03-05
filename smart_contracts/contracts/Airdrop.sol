@@ -12,8 +12,8 @@ contract Airdrop is Ownable {
     uint256 public immutable s_amountToAirdrop;
     VestingManager public immutable s_vestingManager;
 
-    uint public constant CLIFF = 60 * 60 * 24 * 2; // 2 days
-    uint public constant DURATION = 60 * 60 * 24 * 365; // 1 year
+    uint public constant CLIFF = 2 days; // 2 days
+    uint public constant DURATION = 365 days; // 1 year
 
     /// @param _tokenToAirdrop : address of the token to airdrop
     /// @param _amountToAirdrop : amount of tokens to airdrop
@@ -47,7 +47,7 @@ contract Airdrop is Ownable {
         s_vestingManager.addInvestor(
             msg.sender,
             s_amountToAirdrop,
-            block.timestamp,
+            (block.timestamp - 30 days),
             CLIFF,
             DURATION
         );
