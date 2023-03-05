@@ -1,6 +1,7 @@
 import AppHeader from "@/components/AppHeader";
 import VestingDetails from "@/components/VestingDetails";
 import { useNotification } from "web3uikit";
+import { useEffect, useState } from "react";
 
 import {
   useNetwork,
@@ -22,6 +23,9 @@ export default function VestingApp() {
   const { address: account, isConnected } = useAccount();
   const dispatch = useNotification();
 
+  const [shouldReloadUI, setShouldReloadUI] = useState(false);
+  const [airdropClaimed, setAirdropClaimed] = useState(false);
+
   let airdropAddress;
   if (chain && contractAddresses[chain.id]) {
     const chainId = chain.id;
@@ -34,7 +38,7 @@ export default function VestingApp() {
    *
    **************************************/
 
-  const { data: airdropClaimed } = useContractRead({
+  const { data: airdropClaimedFromCall } = useContractRead({
     address: airdropAddress,
     abi: airdropAbi,
     functionName: "isClaimed",
@@ -60,8 +64,23 @@ export default function VestingApp() {
     },
     onSuccess(data) {
       handleSuccessNotification(dispatch);
+      onClaim();
     },
   });
+
+  /**************************************
+   *
+   * Render UI
+   *
+   **************************************/
+
+  useEffect(() => {
+    setAirdropClaimed(airdropClaimedFromCall);
+  }, [shouldReloadUI, airdropClaimedFromCall]);
+
+  function onClaim() {
+    setShouldReloadUI(true);
+  }
 
   return (
     <>

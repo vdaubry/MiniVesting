@@ -13,10 +13,12 @@ import {
   handleFailureNotification,
   handleSuccessNotification,
 } from "../utils/notifications";
+import { useNotification } from "web3uikit";
 
 export default function ClaimVested() {
   const { chain } = useNetwork();
   const { address: account } = useAccount();
+  const dispatch = useNotification();
 
   let contractAddress;
   if (chain && contractAddresses[chain.id]) {
@@ -48,10 +50,10 @@ export default function ClaimVested() {
     hash: data?.hash,
     confirmations: 1,
     onError(error) {
-      handleFailureNotification(error.message);
+      handleFailureNotification(dispatch, error.message);
     },
     onSuccess(data) {
-      handleSuccessNotification();
+      handleSuccessNotification(dispatch);
     },
   });
 
