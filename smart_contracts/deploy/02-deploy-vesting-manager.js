@@ -41,7 +41,7 @@ module.exports = async (hre) => {
     process.env.ETHERSCAN_API_KEY
   ) {
     log("Verifying...");
-    await verify(vesting.address, arguments);
+    await verify(vesting_manager.address, arguments);
   }
   log("----------------------------------------------------");
 };
