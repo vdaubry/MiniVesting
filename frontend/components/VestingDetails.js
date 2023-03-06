@@ -78,9 +78,11 @@ export default function VestingDetails() {
   const balance = truncatedAmount(balanceFromCall);
   const startDate = startDateFromCall;
   const cliffDate =
+    startDateFromCall &&
     cliffDateFromCall &&
     startDateFromCall.toNumber() + cliffDateFromCall.toNumber();
   const durationDate =
+    startDateFromCall &&
     durationDateFromCall &&
     startDateFromCall.toNumber() + durationDateFromCall.toNumber();
 
