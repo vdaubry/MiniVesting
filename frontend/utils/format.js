@@ -16,3 +16,7 @@ export const truncatedAmount = (
     Math.round(formatedAmount * 10 ** formatDecimals) / 10 ** formatDecimals
   );
 };
+
+export const formatDate = (date) => {
+  return new Date(date * 1000).toLocaleDateString();
+};

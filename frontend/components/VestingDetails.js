@@ -2,10 +2,9 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { erc20Abi, contractAddresses, contractAbi } from "../constants";
 import { useNetwork, useAccount, useContractRead } from "wagmi";
-import { truncatedAmount } from "../utils/format";
+import { truncatedAmount, formatDate } from "../utils/format";
 import ClaimVested from "./ClaimVested";
 import VestingChart from "./VestingChart";
-import moment from "moment";
 
 export default function VestingDetails() {
   const { chain } = useNetwork();
@@ -77,20 +76,16 @@ export default function VestingDetails() {
   });
 
   const balance = truncatedAmount(balanceFromCall);
-  const startDate = formatDate(startDateFromCall);
+  const startDate = startDateFromCall;
   const cliffDate =
     cliffDateFromCall &&
-    formatDate(startDateFromCall.toNumber() + cliffDateFromCall.toNumber());
+    startDateFromCall.toNumber() + cliffDateFromCall.toNumber();
   const durationDate =
     durationDateFromCall &&
-    formatDate(startDateFromCall.toNumber() + durationDateFromCall.toNumber());
+    startDateFromCall.toNumber() + durationDateFromCall.toNumber();
 
   const releasableAmount = truncatedAmount(releasableAmountFromCall);
   const vestedAmount = truncatedAmount(amountVestedFromCall);
-
-  function formatDate(date) {
-    return moment(date * 1000).format("MM/DD/YYYY HH:mm");
-  }
 
   return (
     <>
@@ -108,9 +103,14 @@ export default function VestingDetails() {
             <p className="font-bold text-5xl text-white">{balance}</p>
           </div>
 
-          <ClaimVested />
+          <ClaimVested releasableAmount={releasableAmountFromCall} />
 
-          <VestingChart start={new Date()} />
+          <VestingChart
+            startDate={startDate}
+            cliffDate={cliffDate}
+            durationDate={durationDate}
+            vestingAmount={vestingAmountFromCall}
+          />
 
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -128,7 +128,7 @@ export default function VestingDetails() {
                   >
                     Start date
                   </th>
-                  <td className="px-6 py-4">{startDate}</td>
+                  <td className="px-6 py-4">{formatDate(startDateFromCall)}</td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -137,7 +137,7 @@ export default function VestingDetails() {
                   >
                     Cliff
                   </th>
-                  <td className="px-6 py-4">{cliffDate}</td>
+                  <td className="px-6 py-4">{formatDate(cliffDate)}</td>
                 </tr>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -146,7 +146,7 @@ export default function VestingDetails() {
                   >
                     End date
                   </th>
-                  <td className="px-6 py-4">{durationDate}</td>
+                  <td className="px-6 py-4">{formatDate(durationDate)}</td>
                 </tr>
                 <tr className="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <th
