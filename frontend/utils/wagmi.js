@@ -2,7 +2,7 @@ import { mainnet, polygon, arbitrum, hardhat, goerli } from "wagmi/chains";
 import { getDefaultClient } from "connectkit";
 import { createClient } from "wagmi";
 
-const chains = [hardhat, mainnet, polygon, arbitrum, goerli];
+const chains = [polygon, goerli, hardhat, mainnet, arbitrum];
 
 export const client = createClient(
   getDefaultClient({
