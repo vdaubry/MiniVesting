@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { erc20Abi, contractAddresses, contractAbi } from "../constants";
 import { useNetwork, useAccount, useContractRead } from "wagmi";
-import { truncatedAmount, formatDate } from "../utils/format";
+import { truncatedAmount, truncatedAmount2, formatDate } from "../utils/format";
 import ClaimVested from "./ClaimVested";
 import VestingChart from "./VestingChart";
 
@@ -16,14 +16,16 @@ export default function VestingDetails() {
     contractAddress = contractAddresses[chainId]["contract"];
     vestingTokenAddress = contractAddresses[chainId]["vesting_token"];
   }
+  const [balance, setBalance] = useState(false);
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
 
-  const { data: balanceFromCall } = useContractRead({
+  const { data: balanceFromCall, refetch: refetchBalance } = useContractRead({
     address: vestingTokenAddress,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: [account],
+    watch: true,
   });
 
   const { data: startDateFromCall } = useContractRead({
@@ -75,7 +77,6 @@ export default function VestingDetails() {
     args: [account],
   });
 
-  const balance = truncatedAmount(balanceFromCall);
   const startDate = startDateFromCall;
   const cliffDate =
     startDateFromCall &&
@@ -88,6 +89,14 @@ export default function VestingDetails() {
 
   const releasableAmount = truncatedAmount(releasableAmountFromCall);
   const vestedAmount = truncatedAmount(amountVestedFromCall);
+
+  const onRelease = async () => {
+    setBalance(truncatedAmount2((await refetchBalance()).data));
+  };
+
+  useEffect(() => {
+    setBalance(truncatedAmount(balanceFromCall));
+  }, []);
 
   return (
     <>
@@ -105,7 +114,10 @@ export default function VestingDetails() {
             <p className="font-bold text-5xl text-white">{balance}</p>
           </div>
 
-          <ClaimVested releasableAmount={releasableAmountFromCall} />
+          <ClaimVested
+            releasableAmount={releasableAmountFromCall}
+            onRelease={onRelease}
+          />
 
           <VestingChart
             startDate={startDate}

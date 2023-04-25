@@ -15,7 +15,7 @@ import {
 } from "../utils/notifications";
 import { useNotification } from "web3uikit";
 
-export default function ClaimVested({ releasableAmount }) {
+export default function ClaimVested({ releasableAmount, onRelease }) {
   const { chain } = useNetwork();
   const { address: account } = useAccount();
   const dispatch = useNotification();
@@ -29,11 +29,11 @@ export default function ClaimVested({ releasableAmount }) {
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: contractAbi,
-    functionName: "claim",
-    args: [],
+    functionName: "release",
+    args: [account],
   });
 
-  const { data, write: claim } = useContractWrite({
+  const { data, write: release } = useContractWrite({
     ...config,
   });
 
@@ -45,6 +45,7 @@ export default function ClaimVested({ releasableAmount }) {
     },
     onSuccess(data) {
       handleSuccessNotification(dispatch);
+      onRelease();
     },
   });
 
@@ -55,18 +56,20 @@ export default function ClaimVested({ releasableAmount }) {
           You have {truncatedAmount(releasableAmount)} tokens unlocked !
         </p>
 
-        <button
-          type="button"
-          className="font-semibold text-lg text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 mt-8"
-          disabled={!claim || !(releasableAmount > 0)}
-          onClick={() => claim?.()}
-        >
-          {isLoading ? (
-            <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
-          ) : (
-            <div>Claim now</div>
-          )}
-        </button>
+        {releasableAmount > 0 && (
+          <button
+            type="button"
+            className="font-semibold text-lg text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 mt-8"
+            disabled={!release || !(releasableAmount > 0)}
+            onClick={() => release?.()}
+          >
+            {isLoading ? (
+              <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
+            ) : (
+              <div>Claim now</div>
+            )}
+          </button>
+        )}
       </div>
     </>
   );
