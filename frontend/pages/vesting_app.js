@@ -23,7 +23,6 @@ export default function VestingApp() {
   const { address: account } = useAccount();
   const dispatch = useNotification();
 
-  const [shouldReloadUI, setShouldReloadUI] = useState(false);
   const [airdropClaimed, setAirdropClaimed] = useState(false);
 
   let airdropAddress;
@@ -76,10 +75,10 @@ export default function VestingApp() {
 
   useEffect(() => {
     setAirdropClaimed(airdropClaimedFromCall);
-  }, [shouldReloadUI, airdropClaimedFromCall]);
+  }, [airdropClaimedFromCall]);
 
   function onClaim() {
-    setShouldReloadUI(true);
+    setAirdropClaimed(true);
   }
 
   return (

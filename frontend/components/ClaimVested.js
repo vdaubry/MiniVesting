@@ -29,8 +29,8 @@ export default function ClaimVested({ releasableAmount }) {
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: contractAbi,
-    functionName: "release",
-    args: [account],
+    functionName: "claim",
+    args: [],
   });
 
   const { data, write: claim } = useContractWrite({
