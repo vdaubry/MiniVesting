@@ -35,6 +35,9 @@ export default function ClaimVested({ releasableAmount, onRelease }) {
 
   const { data, write: release } = useContractWrite({
     ...config,
+    onError(error) {
+      handleFailureNotification(dispatch, error.message);
+    },
   });
 
   const { isLoading } = useWaitForTransaction({

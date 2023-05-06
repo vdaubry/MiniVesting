@@ -53,6 +53,9 @@ export default function VestingApp() {
 
   const { data, write: claim } = useContractWrite({
     ...config,
+    onError(error) {
+      handleFailureNotification(dispatch, error.message);
+    },
   });
 
   const { isLoading } = useWaitForTransaction({

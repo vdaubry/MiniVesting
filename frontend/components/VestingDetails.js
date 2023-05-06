@@ -17,6 +17,7 @@ export default function VestingDetails() {
     vestingTokenAddress = contractAddresses[chainId]["vesting_token"];
   }
   const [balance, setBalance] = useState(false);
+  const [releasableAmount, setReleasableAmount] = useState(0);
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
 
@@ -70,12 +71,13 @@ export default function VestingDetails() {
     args: [account],
   });
 
-  const { data: releasableAmountFromCall } = useContractRead({
-    address: contractAddress,
-    abi: contractAbi,
-    functionName: "releasable",
-    args: [account],
-  });
+  const { data: releasableAmountFromCall, refetch: refetchReleasableAmount } =
+    useContractRead({
+      address: contractAddress,
+      abi: contractAbi,
+      functionName: "releasable",
+      args: [account],
+    });
 
   const startDate = startDateFromCall;
   const cliffDate =
@@ -87,15 +89,18 @@ export default function VestingDetails() {
     durationDateFromCall &&
     startDateFromCall.toNumber() + durationDateFromCall.toNumber();
 
-  const releasableAmount = truncatedAmount(releasableAmountFromCall);
   const vestedAmount = truncatedAmount(amountVestedFromCall);
 
   const onRelease = async () => {
     setBalance(truncatedAmount2((await refetchBalance()).data));
+    setReleasableAmount(
+      truncatedAmount2((await refetchReleasableAmount()).data)
+    );
   };
 
   useEffect(() => {
     setBalance(truncatedAmount(balanceFromCall));
+    setReleasableAmount(truncatedAmount(releasableAmountFromCall));
   }, []);
 
   return (
