@@ -24,12 +24,16 @@ module.exports = async (hre) => {
 
   const tokenSupply = ethers.utils.parseUnits((150 * 10 ** 9).toString(), 18); // 150 billion (18 decimals)
   const arguments = [deployer, tokenSupply];
-  const vesting = await deploy("Vesting", {
+  await deploy("Vesting", {
     from: deployer,
     args: arguments,
     log: true,
     waitConfirmations: waitBlockConfirmations,
   });
+
+  const vestingToken = await ethers.getContract("Vesting", deployer);
+  const balance = await vestingToken.balanceOf(deployer);
+  console.log(`Deployer Got ${balance.toString()} tokens`);
 
   /***********************************
    *
@@ -41,7 +45,7 @@ module.exports = async (hre) => {
     process.env.ETHERSCAN_API_KEY
   ) {
     log("Verifying...");
-    await verify(vesting.address, arguments);
+    await verify(vestingToken.address, arguments);
   }
   log("----------------------------------------------------");
 };

@@ -22,9 +22,13 @@ module.exports = async (hre) => {
   log("---------------------------------");
   log(`Deploy Airdrop with owner : ${deployer}`);
 
+  const deployerBalance = await ethers.provider.getBalance(deployer);
+  console.log(
+    `Deployer balance: ${ethers.utils.formatEther(deployerBalance)} ETH`
+  );
+
   const vestingToken = await ethers.getContract("Vesting", deployer);
   const vesting_manager = await ethers.getContract("VestingManager", deployer);
-  const tokenSupply = await vestingToken.totalSupply();
   const amountToAirdrop = ethers.utils.parseUnits(
     (150 * 10 ** 4).toString(),
     18
@@ -34,17 +38,25 @@ module.exports = async (hre) => {
     amountToAirdrop,
     vesting_manager.address,
   ];
-  const airdrop = await deploy("Airdrop", {
+
+  log(`Deploy Airdrop with arguments: ${arguments}`);
+
+  await deploy("Airdrop", {
     from: deployer,
     args: arguments,
     log: true,
     waitConfirmations: waitBlockConfirmations,
   });
 
-  const aidrop = await ethers.getContract("Airdrop", deployer);
-  await aidrop.initialize({ gasLimit: 3e7 });
+  log(`Call initialize() on Airdrop`);
+  const airdrop = await ethers.getContract("Airdrop", deployer);
+  await airdrop.initialize();
 
-  vestingToken.transfer(airdrop.address, tokenSupply);
+  const balance = await vestingToken.balanceOf(deployer);
+  console.log(`Deployer has ${balance.toString()} tokens`);
+  log(`Transfer ${balance} tokens to Airdrop`);
+
+  await vestingToken.transfer(airdrop.address, balance);
 
   /***********************************
    *
