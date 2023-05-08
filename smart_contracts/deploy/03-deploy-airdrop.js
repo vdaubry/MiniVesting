@@ -46,6 +46,8 @@ module.exports = async (hre) => {
     args: arguments,
     log: true,
     waitConfirmations: waitBlockConfirmations,
+    gasPrice: ethers.utils.parseUnits("200", "gwei"), //adjust if ProviderError: transaction underpriced
+    gasLimit: 500000,
   });
 
   log(`Call initialize() on Airdrop`);
